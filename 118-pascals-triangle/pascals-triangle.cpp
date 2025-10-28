@@ -1,7 +1,7 @@
 class Solution {
 public:
     vector<vector<int>> generate(int numRows) {
-        vector<vector<int>> ans(numRows);
+        vector<vector<int>> ans(numRows);        //→ Create a 2D vector to hold all rows of Pascal’s triangle.
 
         for (int i = 0; i < numRows; i++) {
             ans[i].resize(i + 1); // Each row has (i+1) elements
