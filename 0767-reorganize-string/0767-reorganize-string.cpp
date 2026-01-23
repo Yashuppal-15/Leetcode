@@ -1,6 +1,5 @@
 class Solution {
 public:
-
     // Custom data type to store character and its frequency
     class Info {
     public:
@@ -13,68 +12,66 @@ public:
         }
     };
 
-    // Comparator for Max Heap (based on frequency)
+    // Comparator for max heap (higher frequency first)
     class Compare {
     public:
-        bool operator()(Info first, Info second) {
-            return first.count < second.count;        // character with higher frequency should come first
+        bool operator()(Info* a, Info* b) {
+            return a->count < b->count;
         }
     };
 
     string reorganizeString(string s) {
 
-        // STEP 1: Count frequency of each character
-        int frequency[26] = {0};
-        for(int i = 0; i < s.length(); i++) {
-            frequency[s[i] - 'a']++;
+        // ---------------- STEP 1 ----------------
+        // Count frequency of each character
+        unordered_map<char, int> frequency;
+        for (char ch : s) {
+            frequency[ch]++;
         }
 
-        // STEP 2: Push all characters with frequency > 0 into max heap
-        priority_queue<Info, vector<Info>, Compare> maxHeap;
-        for(int i = 0; i < 26; i++) {
-            if(frequency[i] > 0) {
-                Info temp(i + 'a', frequency[i]);
-                maxHeap.push(temp);
-            }
+        // ---------------- STEP 2 ----------------
+        // Create max heap based on frequency
+        priority_queue<Info*, vector<Info*>, Compare> maxHeap;
+
+        for (auto it : frequency) {
+            maxHeap.push(new Info(it.first, it.second));
         }
 
-        // STEP 3: Reorganize the string
+        // ---------------- STEP 3 ----------------
+        // Build the reorganized string
         string ans = "";
 
-        while(maxHeap.size() > 1) {
-
-            Info first = maxHeap.top();                   // take two most frequent characters
+        while (maxHeap.size() > 1) {
+            // Take two most frequent characters
+            Info* first = maxHeap.top();
             maxHeap.pop();
 
-            Info second = maxHeap.top();
+            Info* second = maxHeap.top();
             maxHeap.pop();
 
-            ans.push_back(first.ch);                      // add both characters to answer string
-            ans.push_back(second.ch);
+            // Append characters
+            ans.push_back(first->ch);
+            ans.push_back(second->ch);
 
-            first.count--;                               // decrease their frequency
-            second.count--;
+            // Decrease frequency
+            first->count--;
+            second->count--;
 
-            // push back if still remaining
-            if(first.count > 0) {
-                maxHeap.push(first);
-            }
-
-            if(second.count > 0) {
-                maxHeap.push(second);
-            }
+            // Push back if still available
+            if (first->count > 0) maxHeap.push(first);
+            if (second->count > 0) maxHeap.push(second);
         }
 
-        // STEP 4: Handle last remaining character (if any)
-        if(maxHeap.size() == 1) {
-            Info last = maxHeap.top();
+        // ---------------- STEP 4 ----------------
+        // If one character remains
+        if (maxHeap.size() == 1) {
+            Info* last = maxHeap.top();
             maxHeap.pop();
 
-            // if frequency > 1, cannot reorganize
-            if(last.count > 1) {
-                return "";
-            }
-            ans.push_back(last.ch);
+            // If remaining count > 1, not possible
+            if (last->count > 1) return "";
+
+            ans.push_back(last->ch);
         }
 
         return ans;
