@@ -1,19 +1,34 @@
 class Solution {
 public:
-    string customSortString(string& order, string& s) {
-        int freq[26]={0};
-        bitset<26> used=0;
-        for (char c: order)
-            used[c-'a']=1;
-        string ans;
+    // This static string will store the custom order
+    // Static is required because comparator function must be static
+    static string orderStr;
 
-        for (char c: s) {
-            freq[c-'a']++; 
-            if (used[c-'a']==0)
-                ans.push_back(c);
-        }
-        for (char c: order ) 
-            ans+=string(freq[c-'a'], c);
-        return ans;
+    // Custom comparator function
+    // It decides which character should come first
+    static bool compare(char a, char b) {
+
+        // orderStr.find(a) gives the index of character 'a' in order string
+        // orderStr.find(b) gives the index of character 'b' in order string
+        // The character which appears earlier in 'order' should come first
+        return orderStr.find(a) < orderStr.find(b);
+    }
+
+    string customSortString(string order, string s) {
+
+        // Store order string in static variable so comparator can access it
+        orderStr = order;
+
+        // sort() rearranges characters of string s
+        // begin() → starting iterator
+        // end() → ending iterator
+        // compare → custom comparator function
+        sort(s.begin(), s.end(), compare);
+
+        // Return the sorted string
+        return s;
     }
 };
+
+// Definition of static variable outside class
+string Solution::orderStr;
