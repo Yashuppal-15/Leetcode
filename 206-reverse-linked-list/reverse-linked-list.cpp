@@ -1,32 +1,29 @@
-
-//Definition for singly-linked list.
-
-// struct ListNode {
-//     int val;
-//     ListNode *next;
-
-//     ListNode(int x) {
-//         val = x;
-//         next = NULL;
-//     }
-// };
-
+//🔁 APPROACH 2: RECURSIVE APPROACH
 class Solution {
 public:
-    ListNode* reverseList(ListNode* head) {
 
-        ListNode* prev = NULL;                    // prev pointer will point to previous node
-        ListNode* curr = head;                    // curr pointer starts from head
+    // helper recursive function
+    ListNode* reverseUsingRecursion(ListNode* prev, ListNode* curr) {
 
-        // loop until curr becomes NULL
-        while (curr != NULL) {
-
-            ListNode* nextNode = curr->next;       // store next node before breaking the link
-            curr->next = prev;                     // reverse the current node pointer
-            prev = curr;                           // move prev one step ahead
-            curr = nextNode;                      // move curr one step ahead
+        // base case: when curr becomes NULL
+        if (curr == NULL) {
+            return prev;
         }
 
-        return prev;                               // prev will become new head
+        ListNode* nextNode = curr->next;                  // store next node
+        curr->next = prev;                                 // reverse link
+        prev = curr;                                     // move prev and curr forward
+        curr = nextNode;
+
+        // recursive call
+        return reverseUsingRecursion(prev, curr);
+    }
+
+    ListNode* reverseList(ListNode* head) {
+
+        ListNode* prev = NULL;
+        ListNode* curr = head;
+
+        return reverseUsingRecursion(prev, curr);
     }
 };
